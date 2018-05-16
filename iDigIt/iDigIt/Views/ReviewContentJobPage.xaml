@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:iDigIt.Behaviors"       
+             xmlns:converters="clr-namespace:iDigIt.Converters"
+             x:Class="iDigIt.Views.ReviewContentJobPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ZeroBoolConverter
+                x:Key="ZeroBoolConverter" />
+            <converters:SelectedItemEventArgsToSelectedItemConverter
+                x:Key="SelectedItemConverter" />
+            <converters:StringNullOrEmptyBoolConverter
+                x:Key="StringNullOrEmptyBoolConverter" />
+            <converters:NumberIsZeroBoolConverter
+                x:Key="NumberIsZeroBoolConverter" />
+            <converters:NativeTypeConverter
+                x:Key="NativeTypeConverter" />
+            <converters:JobTypeHighlightColorConverter
+                x:Key="JobTypeHighlightColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.Content>
+        <Frame Margin="5,5" Padding="5,5" BackgroundColor="{Binding FRAME_BACKGROUND}" OutlineColor="{Binding FRAME_BORDER}">
+            <StackLayout>
+                <Frame Margin="2,2" Padding="2,2">
+                    <StackLayout Orientation="Vertical" Margin="5,5">
+                        <Label Text="{Binding Title}" FontAttributes="Bold" TextColor="{Binding MAIN_COLOR}"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Margin="2,2" Padding="2,2">
+                    <StackLayout Orientation="Horizontal" Margin="5,5">
+                        <Label Text="Year"/>
+                        <Picker x:Name="YearList" HorizontalOptions="FillAndExpand"
+                                        ItemsSource="{Binding Years}"
+                                        ItemDisplayBinding="{Binding .}" 
+                                        SelectedItem="{Binding Year}"/>
+                    </StackLayout>
+                </Frame>
+                <Frame Margin="2,2" Padding="2,2">
+                    <ListView x:Name="JobTypeCountList" ItemsSource="{Binding JobTypeCounts}" Margin="10,10,10,10" HasUnevenRows="True">
+                        <ListView.Behaviors>
+                            <behaviors:EventToCommandBehavior
+                    EventName="ItemSelected"
+                    Command="{Binding ItemSelectedCommand}"
+                    Converter="{StaticResource SelectedItemConverter}"/>
+                        </ListView.Behaviors>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Grid IsVisible="{Binding Count,Converter={StaticResource ZeroBoolConverter}}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackLayout Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="1" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                            <Label Text="{Binding ShortName}" FontAttributes="Bold" />
+                                        </StackLayout>
+                                        <Frame Margin="2,2" Padding="2,2" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="{Binding ColWidth}">
+                                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" BackgroundColor="{Binding JobColour}">
+                                                <!--<Label Text="{Binding ShortName}" FontAttributes="Bold" />-->
+                                            </StackLayout>
+                                        </Frame>
+                                        <StackLayout Grid.Row="0" Grid.Column="{Binding StartSpan}" Grid.ColumnSpan="{Binding ReverseColWidth}" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                            <Label Text="{Binding Percent}" FontAttributes="Italic" HorizontalOptions="FillAndExpand"/>
+                                            <Label Text="{Binding TimePercent}" FontAttributes="Italic" HorizontalOptions="End" TextColor="{Binding JobColour}"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Frame>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Total:" FontAttributes="Bold"/>
+                    <Label Text="{Binding JobTotal}" />
+                    <Label Text=" - " FontAttributes="Bold"/>
+                    <Label Text="{Binding TimeTotal, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='Job,JobTime'}}"  FontAttributes="Italic"/>
+
+                </StackLayout>
+                <!--BackgroundColor="{Binding FRAME_BACKGROUND}" OutlineColor="{Binding FRAME_BORDER}"-->
+                <Frame Margin="5,5" Padding="5,5">
+                    <ListView x:Name="JobList" ItemsSource="{Binding Jobs}" HasUnevenRows="True" >
+                        <ListView.Behaviors>
+                            <behaviors:EventToCommandBehavior
+                    EventName="ItemSelected"
+                    Command="{Binding ItemSelectedCommand}"
+                    Converter="{StaticResource SelectedItemConverter}"/>
+                        </ListView.Behaviors>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Frame Margin="2,2" Padding="2,2">
+                                        <StackLayout Orientation="Horizontal" BackgroundColor="{Binding .,Converter={StaticResource JobTypeHighlightColorConverter}, ConverterParameter={x:Reference JobList}}">
+                                            <StackLayout Orientation="Vertical" Padding="5,5" HorizontalOptions="StartAndExpand">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="{Binding Date, 
+                                    Converter={StaticResource NativeTypeConverter}, 
+                                    ConverterParameter='DateTimeOffsetString,DateTimeOffsetString'}}" MinimumWidthRequest="50"/>
+                                                    <Label Text="{Binding Name}" FontAttributes="Bold"/>
+                                                    <Label Text="{Binding Time, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='Job,JobTime'}}" IsVisible="{Binding Time,Converter={StaticResource NumberIsZeroBoolConverter}}"  FontAttributes="Italic" />
+
+                                                </StackLayout>
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="{Binding Plant, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantName'}}" IsVisible="{Binding Plant,Converter={StaticResource StringNullOrEmptyBoolConverter}}"/>
+                                                    <Label Text="{Binding Plant, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantVariety'}}" IsVisible="{Binding Plant,Converter={StaticResource StringNullOrEmptyBoolConverter}}" FontAttributes="Italic"/>
+                                                </StackLayout>
+                                                <Label Text="{Binding Notes}" FontAttributes="Italic" IsVisible="{Binding Notes,Converter={StaticResource StringNullOrEmptyBoolConverter}}"/>
+                                            </StackLayout>
+                                            <StackLayout HorizontalOptions="EndAndExpand" VerticalOptions="FillAndExpand" Padding="5,5">
+                                                <Image Source="add.png" HeightRequest="20"/>
+                                            </StackLayout>
+                                        </StackLayout>
+                                        
+                                    </Frame>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Frame>
+            </StackLayout>
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>

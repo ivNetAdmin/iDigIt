@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:iDigIt.Behaviors" 
+             xmlns:converters="clr-namespace:iDigIt.Converters"
+             xmlns:helpers="clr-namespace:iDigIt.Helpers"
+             x:Class="iDigIt.Views.EditFrostPage"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:NativeTypeConverter
+                x:Key="NativeTypeConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="{Binding SaveIcon}" Command="{Binding UpdateFrostCommand}"/>
+        <ToolbarItem Icon="{Binding DeleteIcon}" Command="{Binding DeleteFrostCommand}"/>
+        <!--<ToolbarItem Icon="{Binding CancelIcon}" Command="{Binding NavigationClickedCommand}" CommandParameter="{x:Static helpers:WTGPage.Cancel}"/>-->
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <Frame Margin="5,5" Padding="5,5" BackgroundColor="{Binding FRAME_BACKGROUND}" OutlineColor="{Binding FRAME_BORDER}">
+            <StackLayout>
+                <Frame Margin="2,2" Padding="2,2">
+                    <StackLayout Orientation="Horizontal" Margin="5,5" HorizontalOptions="FillAndExpand">
+                        <Label Text="Date"/>
+                        <DatePicker Date="{Binding Frost.Date, Mode=TwoWay, Converter={StaticResource NativeTypeConverter}, ConverterParameter=DateTime}" HorizontalOptions="FillAndExpand">
+                            <DatePicker.Format>dd-MMM-yy</DatePicker.Format>
+                        </DatePicker>
+                    </StackLayout>
+                </Frame>
+                <Frame Margin="2,2" Padding="2,2">
+                    <StackLayout Margin="5,5">
+                        <Label Text="Notes"/>
+                        <ContentView HeightRequest="200">
+                            <Editor Text="{Binding Frost.Notes, Mode=TwoWay}"/>
+                        </ContentView>
+                    </StackLayout>
+                </Frame>
+                <Frame Margin="2,2" Padding="2,2">
+                    <ScrollView>
+                        <StackLayout Spacing="10" Padding="10" Orientation="Horizontal">
+                            <Image x:Name="CameraButton" Source="{Binding CameraIcon}" HeightRequest="50"  HorizontalOptions="Start" VerticalOptions="Center">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer
+                            Tapped="OnCameraButtonTapped"/>
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Image x:Name="LibraryButton" Source="{Binding LibraryIcon}" HeightRequest="50"  HorizontalOptions="Start" VerticalOptions="Center">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer
+                            Tapped="OnLibraryButtonTapped"/>
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Image x:Name="Image" Source="{Binding Frost.ImagePath, Mode=TwoWay}" HeightRequest="50" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
+                            <Image x:Name="DeleteImageButton" Source="{Binding DeleteIcon}" HeightRequest="50"  HorizontalOptions="EndAndExpand" VerticalOptions="Center">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer
+                            Tapped="OnRemoveImageButtonTapped"/>
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Entry x:Name="ImagePath" Text="{Binding Frost.ImagePath, Mode=TwoWay}" IsVisible="False"/>
+                        </StackLayout>
+
+                    </ScrollView>
+                </Frame>
+            </StackLayout>
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>

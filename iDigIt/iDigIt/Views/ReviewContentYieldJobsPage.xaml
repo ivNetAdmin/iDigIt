@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:iDigIt.Behaviors" 
+             xmlns:converters="clr-namespace:iDigIt.Converters"
+             x:Class="iDigIt.Views.ReviewContentYieldJobsPage"
+             Title="{Binding Title}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:NativeTypeConverter
+                x:Key="NativeTypeConverter" />
+            <converters:StringNullOrEmptyBoolConverter
+                x:Key="StringNullOrEmptyBoolConverter" />
+            <converters:ListNullBoolConverter
+                x:Key="ListNullBoolConverter" />
+            <converters:JobTypeHighlightColorConverter
+                x:Key="JobTypeHighlightColorConverter" />
+            <converters:SelectedItemEventArgsToSelectedItemConverter
+                x:Key="SelectedItemConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Frame Margin="5,5" Padding="5,5" BackgroundColor="{Binding FRAME_BACKGROUND}" OutlineColor="{Binding FRAME_BORDER}">
+            <StackLayout>
+                <Frame Margin="2,2" Padding="2,2">
+                    <StackLayout Orientation="Vertical" Margin="5,5">
+                        <Label Text="Yield Review Details" FontAttributes="Bold" TextColor="{Binding MAIN_COLOR}"/>
+                    </StackLayout>
+                </Frame>
+                <Frame Margin="2,2" Padding="2,2">
+                    <StackLayout Orientation="Vertical" Margin="5,5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{Binding Yield.Year}" Grid.Row="0" Grid.Column="0"/>
+                            <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                <Label Text="{Binding Yield.Plant, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantName'}}" FontAttributes="Bold"/>
+                                <Label Text="{Binding Yield.Plant, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantVariety'}}" FontAttributes="Italic"/>
+                            </StackLayout>
+                            <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="2">
+                                <Label Text="{Binding Yield.Crop}" HorizontalOptions="End"/>
+                            </StackLayout>
+                            <StackLayout Orientation="Vertical" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" IsVisible="{Binding Yield.Notes,Converter={StaticResource StringNullOrEmptyBoolConverter}}">
+                                <Label Text="{Binding Yield.Notes}"/>
+                            </StackLayout>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Frame Margin="2,2" Padding="2,2" IsVisible="{Binding RelatedJobs,Converter={StaticResource ListNullBoolConverter}}">
+                    <StackLayout Orientation="Horizontal" Margin="5,5" HorizontalOptions="FillAndExpand">
+                        <Label Text="Related Jobs" FontAttributes="Bold" TextColor="{Binding MAIN_COLOR}" HorizontalOptions="StartAndExpand"/>
+                        <Image Source="{Binding AddIcon}" HorizontalOptions="EndAndExpand" HeightRequest="20">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding AddYieldJobsCommand}" CommandParameter="related" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                    </StackLayout>
+                </Frame>
+
+                <StackLayout Margin="2,2" >
+                        <ListView x:Name="RelatedJobList" ItemsSource="{Binding RelatedJobs}" HasUnevenRows="True">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Frame Margin="2,2" Padding="2,2">
+                                        <StackLayout Orientation="Vertical" Padding="5,5" BackgroundColor="{Binding .,Converter={StaticResource JobTypeHighlightColorConverter}, ConverterParameter={x:Reference RelatedJobList}}">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="{Binding Date, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='DateTimeOffsetString,DateTimeOffsetString'}}" MinimumWidthRequest="50"/>
+                                                <Label Text="{Binding Name}" FontAttributes="Bold"/>
+                                            </StackLayout>
+
+                                            <Label Text="{Binding Notes}" FontAttributes="Italic" IsVisible="{Binding Notes,Converter={StaticResource StringNullOrEmptyBoolConverter}}"/>
+                                            </StackLayout>
+                                        </Frame>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>
+
+                <!--<Frame Margin="2,2" Padding="2,2" IsVisible="{Binding UnrelatedJobs,Converter={StaticResource ListNullBoolConverter}}">
+                    <StackLayout Orientation="Horizontal" Margin="5,5" HorizontalOptions="FillAndExpand">
+                        <Label Text="Unrelated Jobs" FontAttributes="Bold" TextColor="{Binding MAIN_COLOR}" HorizontalOptions="StartAndExpand"/>
+                        --><!--<Image Source="{Binding AddIcon}" HorizontalOptions="EndAndExpand" HeightRequest="20">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding AddYieldJobsCommand}" CommandParameter="unrelated" />
+                            </Image.GestureRecognizers>
+                        </Image>--><!--
+                    </StackLayout>
+                </Frame>-->
+          
+                <!--<StackLayout Margin="2,2">
+                        <ListView x:Name="UnrelatedJobList" ItemsSource="{Binding UnrelatedJobs}" HasUnevenRows="True">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Frame Margin="2,2" Padding="2,2">
+                                        <StackLayout Orientation="Vertical" Padding="5,5"  BackgroundColor="{Binding .,Converter={StaticResource JobTypeHighlightColorConverter}, ConverterParameter={x:Reference UnrelatedJobList}}">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="{Binding Date, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='DateTimeOffsetString,DateTimeOffsetString'}}"/>
+                                                <Label Text="{Binding Name}" FontAttributes="Bold"/>
+                                            </StackLayout>
+
+                                            <Label Text="{Binding Notes}" FontAttributes="Italic" IsVisible="{Binding Notes,Converter={StaticResource StringNullOrEmptyBoolConverter}}"/>
+                                            </StackLayout>
+                                        </Frame>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>-->
+
+                <Frame Margin="2,2" Padding="2,2" IsVisible="{Binding MoreYields,Converter={StaticResource ListNullBoolConverter}}">
+                    <StackLayout Orientation="Vertical" Margin="5,5">
+                        <Label Text="More Yields" FontAttributes="Bold" TextColor="{Binding MAIN_COLOR}"/>
+                    </StackLayout>
+                </Frame>
+
+                <StackLayout Margin="2,2">
+                    <ListView x:Name="MoreYieldsList" ItemsSource="{Binding MoreYields}" HasUnevenRows="True">
+                        <ListView.Behaviors>
+                            <behaviors:EventToCommandBehavior
+                    EventName="ItemSelected"
+                    Command="{Binding ItemSelectedCommand}"
+                    Converter="{StaticResource SelectedItemConverter}"/>
+                        </ListView.Behaviors>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Frame Margin="2,2" Padding="2,2">
+                                        <StackLayout Orientation="Vertical" Margin="5,5">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Label Text="{Binding Year}" Grid.Row="0" Grid.Column="0"/>
+                                                <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                                    <Label Text="{Binding Plant, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantName'}}" FontAttributes="Bold"/>
+                                                    <Label Text="{Binding Plant, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantVariety'}}" FontAttributes="Italic"/>
+                                                </StackLayout>
+                                                <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="2">
+                                                    <Label Text="{Binding Crop}" HorizontalOptions="End"/>
+                                                </StackLayout>
+                                                <StackLayout Orientation="Vertical" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" IsVisible="{Binding Notes,Converter={StaticResource StringNullOrEmptyBoolConverter}}">
+                                                    <Label Text="{Binding Notes}" />
+                                                </StackLayout>
+                                            </Grid>
+                                        </StackLayout>
+                                    </Frame>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackLayout>
+
+                <!--<StackLayout Margin="2,2">
+                        <ListView x:Name="MoreYieldsList" ItemsSource="{Binding MoreYields}" HasUnevenRows="True">
+                        <ListView.Behaviors>
+                            <behaviors:EventToCommandBehavior
+                    EventName="ItemSelected"
+                    Command="{Binding ItemSelectedCommand}"
+                    Converter="{StaticResource SelectedItemConverter}"/>
+                        </ListView.Behaviors>
+                        <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Frame Margin="5,5">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Label Text="{Binding Year}" Grid.Row="0" Grid.Column="0"/>
+                                                <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                                    <Label Text="{Binding Plant, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantName'}}" FontAttributes="Bold"/>
+                                                    <Label Text="{Binding Plant, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantVariety'}}" FontAttributes="Italic"/>
+                                                </StackLayout>
+                                                <Label Text="{Binding Crop}" Grid.Row="0" Grid.Column="2" HorizontalOptions="End"/>
+                                            </Grid>
+                                        </Frame>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>-->
+       
+            </StackLayout>
+
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>

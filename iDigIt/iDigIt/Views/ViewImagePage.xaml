@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="iDigIt.Views.ViewImagePage"
+             Title="{Binding Title}">
+    <ContentPage.Content>
+        <Frame Margin="5,5" Padding="5,5" BackgroundColor="{Binding FRAME_BACKGROUND}" OutlineColor="{Binding FRAME_BORDER}">
+            <StackLayout>
+                <Image x:Name="ViewImage" Source="{Binding Source}"  Aspect="AspectFit"  HorizontalOptions="FillAndExpand"/>
+                <Label Text="{Binding Path}" FontAttributes="Italic"/>
+            </StackLayout>
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>

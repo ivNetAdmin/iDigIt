@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:iDigIt.Behaviors"              
+             xmlns:converters="clr-namespace:iDigIt.Converters"
+             xmlns:helpers="clr-namespace:iDigIt.Helpers"  
+             x:Class="iDigIt.Views.JobListPage"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:SelectedItemEventArgsToSelectedItemConverter
+                x:Key="SelectedItemConverter" />
+            <converters:StringNullOrEmptyBoolConverter
+                x:Key="StringNullOrEmptyBoolConverter" />
+            <converters:NumberIsZeroBoolConverter
+                x:Key="NumberIsZeroBoolConverter" />
+            <converters:NativeTypeConverter
+                x:Key="NativeTypeConverter" />
+            <converters:JobTypeHighlightColorConverter
+                x:Key="JobTypeHighlightColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="{Binding AddIcon}" Command="{Binding NavigationClickedCommand}" CommandParameter="{x:Static helpers:WTGPage.AddJob}"/>
+        <ToolbarItem Icon="{Binding MainPageIcon}" Command="{Binding NavigationClickedCommand}" CommandParameter="{x:Static helpers:WTGPage.Home}"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <Frame Margin="5,5" Padding="5,5" BackgroundColor="{Binding FRAME_BACKGROUND}" OutlineColor="{Binding FRAME_BORDER}">
+            <ListView x:Name="JobList" ItemsSource="{Binding Jobs}" HasUnevenRows="True" >
+                <ListView.Behaviors>
+                    <behaviors:EventToCommandBehavior
+                    EventName="ItemSelected"
+                    Command="{Binding ItemSelectedCommand}"
+                    Converter="{StaticResource SelectedItemConverter}"/>
+                </ListView.Behaviors>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Frame Margin="2,1" Padding="2,0">
+                                <StackLayout Orientation="Vertical" Padding="4,2"                                               
+                                     BackgroundColor="{Binding .,Converter={StaticResource JobTypeHighlightColorConverter}, ConverterParameter={x:Reference JobList}}">
+
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="4*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                                            <Label Text="{Binding Date, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='DateTimeOffsetString,DateTimeOffsetString'}}" MinimumWidthRequest="50" HorizontalOptions="Start"/>
+                                            <Label Text="{Binding Plant,
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantName'}}" 
+                                               HorizontalOptions="EndAndExpand" IsVisible="{Binding Plant,Converter={StaticResource StringNullOrEmptyBoolConverter}}"/>
+                                            <Label Text="{Binding Plant, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='PlantName,PlantVariety'}}" IsVisible="{Binding Plant,Converter={StaticResource StringNullOrEmptyBoolConverter}}" 
+                                               HorizontalOptions="End"
+                                               FontAttributes="Italic"/>
+                                        </StackLayout>
+
+                                        <Image Source="{Binding ImagePath}" HeightRequest="40" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+                                                   HorizontalOptions="EndAndExpand" VerticalOptions="Center"
+                                                   IsVisible="{Binding ImagePath,Converter={StaticResource StringNullOrEmptyBoolConverter}}">
+                                            <Image.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnImageButtonTapped"/>
+                                            </Image.GestureRecognizers>
+                                        </Image>
+
+                                        <StackLayout Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+                                            <Label Text="{Binding Name}" />
+                                            <Label Text="{Binding Time, 
+                                        Converter={StaticResource NativeTypeConverter}, 
+                                        ConverterParameter='Job,JobTime'}}" 
+                                                   IsVisible="{Binding Time,Converter={StaticResource NumberIsZeroBoolConverter}}"  FontAttributes="Italic"/>
+                                        </StackLayout>
+                                        
+                                    </Grid>
+                                    <Label Text="{Binding Notes}" FontAttributes="Italic" IsVisible="{Binding Notes,Converter={StaticResource StringNullOrEmptyBoolConverter}}"/>
+                                </StackLayout>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>
